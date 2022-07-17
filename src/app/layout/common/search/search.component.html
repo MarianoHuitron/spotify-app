@@ -1,0 +1,165 @@
+<button mat-icon-button *ngIf="!opened" (click)="open()">
+    <mat-icon class="dark:text-gray-200">search</mat-icon>
+</button>
+
+<div class="absolute inset-0 flex items-center flex-shrink-0 z-99  transition ease-in-out delay-150 "
+    *ngIf="opened">
+    <mat-icon class="absolute ml-6 sm:ml-8 text-slate-200">search</mat-icon>
+    <input id="search-input"
+        class="w-full h-full px-16 sm:px-18 dark:bg-slate-800 outline-none dark:text-slate-400 search-input"
+        [formControl]="searchControl"
+        [matAutocomplete]="matAutocomplete"
+        [placeholder]="'Escribe para buscar...'"
+        #barSearchInput>
+    <mat-autocomplete
+        (optionSelected)="selectedItem()"
+        [classList]="'auto-list-items'"
+        class="h-3/4 sm:px-2 border-t rounded-b shadow-md dark:bg-slate-800"
+        [disableRipple]="true"
+        #matAutocomplete="matAutocomplete">
+        <mat-option 
+            class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent dark:text-slate-400"
+            *ngIf="showNoResultsLabel()">
+           Sin resultados
+        </mat-option>
+
+        <mat-chip-list *ngIf="!showNoResultsLabel()" aria-label="Fish selection" class="flex justify-center mt-2  px-2">
+            <mat-chip (click)="mode = 'all'" selectable="true" [selected]="mode == 'all'">Todo</mat-chip>
+            <mat-chip (click)="mode = 'track'" selectable="true" [selected]="mode == 'track'">Canciones</mat-chip>
+            <mat-chip (click)="mode = 'artist'" selectable="true" [selected]="mode == 'artist'">Artista</mat-chip>
+            <mat-chip (click)="mode = 'album'" selectable="true" [selected]="mode == 'album'">Álbum</mat-chip>
+            <mat-chip (click)="mode = 'playlist'" selectable="true" [selected]="mode == 'playlist'">Playlist</mat-chip>
+        </mat-chip-list>
+            
+            
+        <ng-container *ngIf="tracks && (mode === 'all' || mode === 'track')">
+            <mat-optgroup class="flex items-center mt-2 px-2">
+                <span class="text-sm font-semibold tracking-wider text-secondary dark:text-slate-400">{{'CANCIONES'}}</span>
+            </mat-optgroup>
+            <ng-container *ngFor="let track of tracks.items">
+                <mat-option  class="group relative mb-1 py-0 px-6 text-md h-24 rounded-md  dark:hover:bg-hover">
+                    <ng-container *ngTemplateOutlet="tracItem; context: {$implicit: track}" ></ng-container>
+                </mat-option>
+            </ng-container>
+        </ng-container>
+
+
+        
+
+        <ng-container *ngIf="artists && (mode === 'all' || mode === 'artist')">
+            <mat-optgroup class="flex items-center mt-2 px-2">
+                <span class="text-sm font-semibold tracking-wider text-secondary dark:text-slate-400">{{'ARTISTAS'}}</span>
+            </mat-optgroup>
+            <ng-container *ngFor="let artist of artists.items">
+                <mat-option  class="group relative mb-1 py-0 px-6 text-md h-24 rounded-md  dark:hover:bg-hover">
+                    <ng-container *ngTemplateOutlet="artistItem; context: {$implicit: artist}" ></ng-container>
+                </mat-option>
+            </ng-container>
+        </ng-container>
+
+        
+
+        <ng-container *ngIf="albums && (mode === 'all' || mode === 'album')">
+            <mat-optgroup class="flex items-center mt-2 px-2">
+                <span class="text-sm font-semibold tracking-wider text-secondary dark:text-slate-400">{{'ALBUMS'}}</span>
+            </mat-optgroup>
+            <ng-container *ngFor="let album of albums.items">
+                <mat-option  class="group relative mb-1 py-0 px-6 text-md h-24 rounded-md  dark:hover:bg-hover">
+                    <ng-container *ngTemplateOutlet="albumItem; context: {$implicit: album}" ></ng-container>
+                </mat-option>
+            </ng-container>
+        </ng-container>
+
+        
+
+        <ng-container *ngIf="playlists && (mode === 'all' || mode === 'playlist')">
+            <mat-optgroup class="flex items-center mt-2 px-2">
+                <span class="text-sm font-semibold tracking-wider text-secondary dark:text-slate-400">{{'PLAYLISTS'}}</span>
+            </mat-optgroup>
+            <ng-container *ngFor="let playlist of playlists.items">
+                <mat-option  class="group relative mb-1 py-0 px-6 text-md h-24 rounded-md  dark:hover:bg-hover">
+                    <ng-container *ngTemplateOutlet="playlistItem; context: {$implicit: playlist}" ></ng-container>
+                </mat-option>
+            </ng-container>
+        </ng-container>
+
+            
+    
+    </mat-autocomplete>
+    <button
+        class="absolute top-1/2 right-5 sm:right-7 flex-shrink-0 w-10 h-10 -mt-5 dark:text-slate-200"
+        mat-icon-button
+        (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<ng-template #tracItem let-track>
+    <div (click)="playAudio(track)" class="rounded-xl  space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 dark:hover:bg-hover">
+        <div class="flex items-center space-x-4">
+            <img [src]="utils.getImage(track.album.images)" alt="" width="88" height="88" class="flex-none rounded-lg bg-slate-100" loading="lazy" />
+            <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                <p class="text-cyan-500 dark:text-cyan-400 text-sm leading-6">
+                </p>
+                <h2 class="text-slate-500 dark:text-slate-400 text-sm leading-6 truncate">
+                {{utils.getArtists(track.artists)}}
+                </h2>
+                <p class="text-slate-900 dark:text-slate-50 text-lg">
+                {{track.name}}
+                </p>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #artistItem let-artist>
+    <a [routerLink]="['/artist',artist.id]" class="rounded-xl p-4 sm:p-10  lg:p-6 xl:p-10 xl:pb-8 space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 dark:hover:bg-hover">
+        <div class="flex items-center space-x-4">
+            <img [src]="utils.getImage(artist.images)" alt="" width="88" height="88" class="w-24 h-24 flex-none rounded-full bg-slate-100" loading="lazy" />
+            <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                <p class="text-slate-900 dark:text-slate-50 text-lg">
+                {{artist.name}}
+                </p>
+            </div>
+        </div>
+    </a>
+</ng-template>
+
+<ng-template #albumItem let-album>
+    <a [routerLink]="['/album',album.id]" class=" rounded-xl p-4 pb-6 sm:p-10 sm:pb-8 lg:p-6 xl:p-10 xl:pb-8 space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 dark:hover:bg-hover">
+        <div class="flex items-center space-x-4">
+            <img [src]="utils.getImage(album.images)" alt="" width="88" height="88" class="flex-none rounded-lg bg-slate-100" loading="lazy" />
+            <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                <p class="text-cyan-500 dark:text-cyan-400 text-sm leading-6">
+                <abbr title="Episode">{{album.total_tracks}}</abbr> Canciones
+                </p>
+                <h2 class="text-slate-500 dark:text-slate-400 text-sm leading-6 truncate">
+                {{utils.getArtists(album.artists)}}
+                </h2>
+                <p class="text-slate-900 dark:text-slate-50 text-lg">
+                {{album.name}}
+                </p>
+            </div>
+        </div>
+    </a>
+</ng-template>
+
+<ng-template #playlistItem let-playlist>
+    <a [routerLink]="['/playlist', playlist.id]" class="rounded-xl p-4 pb-6 sm:p-10 sm:pb-8 lg:p-6 xl:p-10 xl:pb-8 space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 dark:hover:bg-hover">
+        <div class="flex items-center space-x-4">
+            <img [src]="utils.getImage(playlist.images)" alt="" width="88" height="88" class="flex-none rounded-lg bg-slate-100" loading="lazy" />
+            <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                <p class="text-cyan-500 dark:text-cyan-400 text-sm leading-6">
+                <abbr title="Episode">{{playlist.tracks.total}}</abbr> Canciones
+                </p>
+                <h2 class="text-slate-500 dark:text-slate-400 text-sm leading-6 truncate">
+                {{playlist.description}}
+                </h2>
+                <p class="text-slate-900 dark:text-slate-50 text-lg">
+                {{playlist.name}}
+                </p>
+            </div>
+        </div>
+    </a>
+</ng-template>

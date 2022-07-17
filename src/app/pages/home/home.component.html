@@ -1,0 +1,25 @@
+<!-- popular playlists -->
+<div class="p-8 flex flex-col mt-2   dark:bg-gray-900">
+  <div class="font-semibold dark:text-slate-400 text-xl mb-2">Listas populares</div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+    <ng-container *ngFor="let playlist of featuredPlaylists">
+      <a [routerLink]="['/playlist', playlist.id]" class="bg-white  dark:bg-slate-800 rounded-xl p-4 pb-6 sm:p-10 sm:pb-8 lg:p-6 xl:p-10 xl:pb-8 space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
+        <div class="flex items-center space-x-4">
+          <img [src]="utils.getImage(playlist.images)" alt="" width="88" height="88" class="flex-none rounded-lg bg-slate-100" loading="lazy" />
+          <div class="min-w-0 flex-auto space-y-1 font-semibold">
+            <p class="text-cyan-500 dark:text-cyan-400 text-sm leading-6">
+              <abbr title="Episode">{{playlist.tracks.total}}</abbr> Canciones
+            </p>
+            <h2 class="text-slate-500 dark:text-slate-400 text-sm leading-6 truncate">
+              {{playlist.description}}
+            </h2>
+            <p class="text-slate-900 dark:text-slate-50 text-lg">
+              {{playlist.name}}
+            </p>
+          </div>
+        </div>
+      </a>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="px-4 py-4 flex flex-col flex-auto w-full">
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
+      
+    <div class="flex flex-col">
+        <!-- Artist -->
+        <div class="relative p-4 bg-card h-40 md:h-80 bg-cover shadow dark:bg-slate-800 rounded " [ngStyle]="{'background-image': 'url('+utils.getImage(artist.images)+')'}">
+          <div class="absolute bottom-0 bg-slate-800 opacity-75 w-full left-0 rounded-bl rounded-br p-2">
+                <div class="font-medium text-2xl  text-slate-200 px-2 text-white">{{artist.name}}</div>
+                <div class="text-white px-2">{{artist.followers.total | number}} Seguidores</div>
+                <div class="text-white px-2">{{artist.genres}}</div>
+          </div>
+        </div>
+
+        <!-- Albums by artist - desktop view -->
+        <div class="flex-col mt-2 hidden sm:flex">
+          <ng-container *ngTemplateOutlet="albumsItems"> </ng-container>
+        </div>
+    </div>
+
+    <!-- popular tracks  -->
+    <div class="flex flex-col">
+        <div class="p-4 bg-card shadow dark:bg-slate-800 rounded">
+            <div class="flex flex-col">
+                <div class="font-medium text-lg text-slate-200 border-b border-slate-600 pb-1">Populares</div>
+            </div>
+            <ng-container *ngFor="let track of tracks; let i = index;">
+                <div class="bg-white  dark:bg-slate-800 rounded-xl p-2">
+                    <div class="flex items-center ">
+                      <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                        <p class="text-cyan-500 dark:text-cyan-400 text-sm " style="margin-bottom: 0 !important;">
+                            #{{i+1}}
+                          </p>
+                        <h2 class="text-slate-500 dark:text-slate-400 text-sm truncate">
+                          {{track.album.name}}
+                        </h2>
+                        <p class="text-slate-900 dark:text-slate-50 text-lg">
+                          {{track.name}}
+                        </p>
+                        <p class="text-slate-900 dark:text-slate-400 font-normal ">
+                          {{utils.getDuration(track.duration_ms)}} minutos
+                        </p>
+                      
+                      </div>
+                      <div *ngIf="track.preview_url">
+                        <button mat-icon-button class="text-white bg-slate-700" (click)="playAudio(track)">
+                            <mat-icon *ngIf="track.id !== currentPlaying?.id">play_arrow</mat-icon>
+                            <mat-icon *ngIf="track.id === currentPlaying?.id">stop</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="border-b border-slate-600"></div>
+            </ng-container>
+        </div>
+    </div> 
+  </div>
+
+  <!-- only for mobile view -->
+  <div class="flex flex-col sm:hidden mt-4">
+    <ng-container *ngTemplateOutlet="albumsItems;" ></ng-container>
+  </div>
+
+</div>
+
+<ng-template #albumsItems >
+  <div class="flex flex-col">
+    <div class="font-medium text-lg text-slate-200  pb-2">Albums</div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+      <ng-container *ngFor="let album of albums">
+        <a [routerLink]="['/album', album.id]" class="flex flex-col max-w-8 w-full bg-card dark:bg-slate-800 m-2 rounded shadow">
+          <img [src]="utils.getImage(album.images)" alt="" loading="lazy" class="object-cover rounded-tr rounded-tl">
+          <div class="flex flex-col mt-2 font-medium p-2">
+            <div class="text-slate-200 truncate font-semibold">{{album.name}}</div>
+            <div class="text-slate-400 truncate font-normal">{{album.release_date | date:'yyyy' }} - {{album.type}}</div>
+          </div>
+        </a>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

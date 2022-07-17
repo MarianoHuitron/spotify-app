@@ -1,0 +1,79 @@
+<div class="px-4 py-4 flex flex-col flex-auto w-full">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
+    <div class="flex flex-col">
+      <!-- album -->
+      <div
+        class="relative p-4 bg-card h-40 md:h-80 bg-cover shadow dark:bg-slate-800 rounded"
+        [ngStyle]="{
+          'background-image': 'url(' + utils.getImage(album.images) + ')'
+        }"
+      >
+        <div
+          class="absolute bottom-0 bg-slate-800 opacity-75 w-full left-0 rounded-bl rounded-br p-2"
+        >
+          <div class="font-medium text-2xl text-slate-200 px-2 text-white">
+            {{ album.name }}
+          </div>
+          <div class="text-white px-2">
+            {{ album.release_date | date: "yyyy" }} - {{ album.album_type }}
+          </div>
+          <div class="text-white px-2">
+            {{ utils.getArtists(album.artists) }}
+          </div>
+          <div
+            *ngIf="album.copyrights && album.copyrights[0]"
+            class="text-white px-2"
+          >
+            {{ album.copyrights[0].text }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- tracks by album -->
+    <div class="flex flex-col">
+      <div class="p-4 bg-card shadow dark:bg-slate-800 rounded">
+        <div class="flex flex-col">
+          <div
+            class="font-medium text-lg text-slate-200 border-b border-slate-600 pb-1"
+          >
+            {{ album.total_tracks }} Canciones
+          </div>
+        </div>
+        <ng-container *ngFor="let track of album.tracks.items">
+          <div class="bg-white dark:bg-slate-800 rounded-xl p-2">
+            <div class="flex items-center">
+              <div class="min-w-0 flex-auto space-y-1 font-semibold">
+                <p
+                  class="text-cyan-500 dark:text-cyan-400 text-sm"
+                  style="margin-bottom: 0 !important"
+                >
+                  #{{ track.track_number }}
+                </p>
+
+                <p class="text-slate-900 dark:text-slate-50 text-lg">
+                  {{ track.name }}
+                </p>
+                <p class="text-slate-900 dark:text-slate-400 font-normal">
+                  {{ utils.getDuration(track.duration_ms) }} minutos
+                </p>
+              </div>
+              <!-- only if has preview url -->
+              <div *ngIf="track.preview_url">
+                <button
+                  mat-icon-button
+                  class="text-white bg-slate-700"
+                  (click)="playAudio(track)"
+                >
+                  <mat-icon *ngIf="track.id !== currentPlaying?.id">play_arrow</mat-icon>
+                  <mat-icon *ngIf="track.id === currentPlaying?.id">stop</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="border-b border-slate-600"></div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

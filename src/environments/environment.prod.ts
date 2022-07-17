@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  client_secret: "",
+  client_id: "",
 };

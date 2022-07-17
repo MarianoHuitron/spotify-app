@@ -1,0 +1,62 @@
+<mat-drawer-container class="h-full dark:bg-gray-900">
+  <mat-drawer
+    #drawer
+    mode="side"
+    class="w-56 dark bg-gray-900 print:hidden hidden"
+    [opened]="true"
+  >
+  </mat-drawer>
+
+  <!-- wrapper -->
+  <div class="relative flex flex-col flex-auto w-full min-w-0 h-full">
+    <!-- header -->
+    <div
+      class="relative flex flex-0 items-center w-full h-16 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden"
+    >
+      <div class="flex items-center pr-2 space-x-2">
+        <!-- Navigation home button -->
+        <button mat-icon-button routerLink="/">
+          <div class="font-medium text-white">Inicio</div>
+        </button>
+      </div>
+      <!-- search -->
+      <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
+        <search></search>
+      </div>
+    </div>
+
+    <!-- main -->
+    <div class="flex flex-col flex-auto pb-20">
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- footer -->
+    <div class="bg-slate-800 px-4 py-2 fixed w-full bottom-0 h-20 shadow" *ngIf="currentTrack">
+      <div class="flex flex-row items-center justify-between md:justify-start">
+        <a class="bg-white  dark:bg-slate-800 rounded-xl bg-slate-900">
+          <div class="flex items-center space-x-4">
+            <img [src]="utils.getImage(currentTrack?.album?.images) || '/assets/no-image.png'" alt=""  class="flex-none rounded-lg bg-slate-100 h-10 w-10" loading="lazy" />
+            <div class="min-w-0 flex-auto font-semibold">
+           
+              <h2 class="text-slate-500 dark:text-slate-400 text-sm leading-6 truncate mb-0 mt-1">
+                {{utils.getArtists(currentTrack.artists)}}
+              </h2>
+              <p class="text-slate-900 dark:text-slate-50 text-lg truncate">
+                {{currentTrack.name}}
+              </p>
+            </div>
+          </div>
+        </a>
+        <div class="ml-4 flex flex-col ml-0 md:ml-10">
+          <button mat-icon-button class="text-white bg-slate-700 " (click)="stop()">
+              <mat-icon >stop</mat-icon>
+          </button>
+          <p class="text-slate-900 dark:text-slate-400 font-normal">
+           {{utils.getDuration(currentTrack.duration_ms)}} minutos
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</mat-drawer-container>
